@@ -25,3 +25,12 @@ client_secret.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# images
+*.svg
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
