@@ -98,9 +98,9 @@ class App extends React.Component<{}, IState> {
     if(tag !== ""){
       url += "/tag?=" + tag
     }
-
+    console.log("L101 App.tsx url = " + url)
     fetch(url, {method: 'GET'})
-    .then(res => res.json)
+    .then(res => res.json())
     .then(json => {
       let currentMeme = json[0]
       console.log("L106 App.tsx json = " + JSON.stringify(json))
@@ -117,7 +117,7 @@ class App extends React.Component<{}, IState> {
       }
       this.setState({
         currentMeme,
-        memes: [json]
+        memes: [json] // was memes: json gave me an error.
       })
     });
   }
