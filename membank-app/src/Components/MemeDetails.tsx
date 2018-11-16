@@ -16,7 +16,8 @@ export default class MemeDetails extends React.Component<IProps, IState> {
         this.state = {
             open: false
         }
-
+        //
+        this.updateMeme = this.updateMeme.bind(this)
     }
 
 	public render() {
@@ -37,7 +38,7 @@ export default class MemeDetails extends React.Component<IProps, IState> {
                 <div className="row meme-done-button">
                     <div className="btn btn-primary btn-action" onClick={this.downloadMeme.bind(this, currentMeme.url)}>Download </div>
                     <div className="btn btn-primary btn-action" onClick={this.onOpenModal}>Edit </div>
-                    <div className="btn btn-primary btn-action" onClick={this.methodNotImplemented.bind(this, currentMeme.id)}>Delete </div>
+                    <div className="btn btn-primary btn-action" onClick={this.deleteMeme.bind(this, currentMeme.id)}>Delete </div>
                 </div>
                 <Modal open={open} onClose={this.onCloseModal}>
                     <form>
@@ -51,7 +52,7 @@ export default class MemeDetails extends React.Component<IProps, IState> {
                             <input type="text" className="form-control" id="meme-edit-tag-input" placeholder="Enter Tag"/>
                             <small className="form-text text-muted">Tag is used for search</small>
                         </div>
-                        <button type="button" className="btn" onClick={this.methodNotImplemented}>Save</button>
+                        <button type="button" className="btn" onClick={this.updateMeme}>Save</button>
                     </form>
                 </Modal>
             </div>
@@ -68,12 +69,71 @@ export default class MemeDetails extends React.Component<IProps, IState> {
 		this.setState({ open: false });
     };
     
-    private methodNotImplemented() {
-		alert("Method not implemented")
-	}
+    // private methodNotImplemented() {
+	// 	alert("Method not implemented")
+	// }
 
     // Open meme image in new tab
     private downloadMeme(url: any) {
         window.open(url);
+    }
+
+    // Updates meme details
+    private updateMeme(){
+        const titleInput = document.getElementById("meme-edit-title-input") as HTMLInputElement
+        const tagInput = document.getElementById("meme-edit-tag-input") as HTMLInputElement
+
+        if(titleInput === null || tagInput === null){
+            return;
+        }
+
+        const currentMeme = this.props.currentMeme
+        const url = "http://phase2apitest.azurewebsites.net/api/meme/" + currentMeme.id
+        const updatedTitle = titleInput.value
+        const updatedTag = tagInput.value
+        console.log("L93 MemeDetails updatedTitle = ", updatedTitle);
+        console.log("L94 MemeDetails updatedTag = ", updatedTag);
+        
+        fetch(url, {
+            body: JSON.stringify({
+                "height": currentMeme.height,
+                "id": currentMeme.id,
+                "tags": updatedTag,
+                "title": updatedTitle,
+                "uploaded": currentMeme.uploaded,
+                "url": currentMeme.url,
+                "width": currentMeme.width
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'cache-control': 'no-cache'
+            },
+            method: 'PUT'
+        })
+        .then((response: any) => {
+            if(!response.ok){
+                // Error State
+                alert(response.statusText + " " + url)
+            } else {
+                location.reload()
+            }
+        })
+    }// updateMeme
+
+    private deleteMeme(id: any) {
+        const url = "http://phase2apitest.azurewebsites.net/api/meme/" + id
+    
+        fetch(url, {
+            method: 'DELETE'
+        })
+        .then((response : any) => {
+            if (!response.ok) {
+                // Error Response
+                alert(response.statusText)
+            }
+            else {
+                location.reload()
+            }
+        })
     }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Modal from 'react-responsive-modal';
 import './App.css';
-import MemeDetail from './Components/MemeDetails';
+import MemeDetails from './Components/MemeDetails';
 import MemeList from './Components/MemeList';
 import MyAvatar from './my-avatar.jpg';
 
@@ -25,7 +25,11 @@ class App extends React.Component<{}, IState> {
     this.selectNewMeme = this.selectNewMeme.bind(this)
     //
     this.fetchMemes = this.fetchMemes.bind(this)
-    this.fetchMemes("")	
+		this.fetchMemes("")	
+		//
+		this.handleFileUpload = this.handleFileUpload.bind(this)
+		//
+		this.uploadMeme = this.uploadMeme.bind(this)
 	}
 
 	public render() {
@@ -41,7 +45,7 @@ class App extends React.Component<{}, IState> {
 			<div className="container">
 				<div className="row">
 					<div className="col-7">
-						<MemeDetail currentMeme={this.state.currentMeme} />
+						<MemeDetails currentMeme={this.state.currentMeme} />
 					</div>
 					<div className="col-5">
 						<MemeList memes={this.state.memes} selectNewMeme={this.selectNewMeme} searchByTag={this.fetchMemes}/>
@@ -62,19 +66,19 @@ class App extends React.Component<{}, IState> {
 					</div>
 					<div className="form-group">
 						<label>Image</label>
-						<input type="file" onChange={this.methodNotImplemented} className="form-control-file" id="meme-image-input" />
+						<input type="file" onChange={this.handleFileUpload} className="form-control-file" id="meme-image-input" />
 					</div>
 
-					<button type="button" className="btn" onClick={this.methodNotImplemented}>Upload</button>
+					<button type="button" className="btn" onClick={this.uploadMeme}>Upload</button>
 				</form>
 			</Modal>
 		</div>
 		);
 	}
 
-	private methodNotImplemented() {
-		alert("Method not implemented")
-	}
+	// private methodNotImplemented() {
+	// 	alert("Method not implemented")
+	// }
 
 	// Modal open
 	private onOpenModal = () => {
@@ -103,7 +107,7 @@ class App extends React.Component<{}, IState> {
     .then(res => res.json())
     .then(json => {
       let currentMeme = json[0]
-      console.log("L106 App.tsx json = " + JSON.stringify(json))
+      // console.log("L106 App.tsx json = " + JSON.stringify(json))
       if(currentMeme === undefined){
         currentMeme = {
           "height":"0",
@@ -117,11 +121,55 @@ class App extends React.Component<{}, IState> {
       }
       this.setState({
         currentMeme,
-        memes: [json] // was memes: json gave me an error.
+        memes: json // was memes: json gave me an error.
       })
-    });
-  }
+    })
+	}// fetchMemes()
+	
+// Gets file from form input
+	private handleFileUpload(fileList: any){
+		console.log("L131 App.handleFileUpload = ", fileList.target.files)
+		this.setState({
+			uploadFileList: fileList.target.files
+		})
+	}// handleFileUpload()
 
+// Uploads file to URI
+	private uploadMeme(){
+		console.log("L139 App.this.state.uploadFileList = ", this.state.uploadFileList)
+		const titleInput = document.getElementById("meme-title-input") as HTMLInputElement
+		const tagInput = document.getElementById("meme-tag-input") as HTMLInputElement
+		const imageFile = this.state.uploadFileList[0]
+
+		if(titleInput === null || tagInput === null || imageFile === null){
+			return;
+		}
+
+		const title = titleInput.value
+		const tag = tagInput.value
+		const url = "http://phase2apitest.azurewebsites.net/api/meme/upload"
+
+		const formData = new FormData()
+		formData.append("Title", title)
+		formData.append("Tags", tag)
+		formData.append("image", imageFile)
+
+		fetch(url, {
+			body: formData,
+			headers: {'cache-control':'no-cache'},
+			method: 'POST'
+		})
+		.then((response: any) => {
+			if(!response.ok){
+				// Rise an error
+				alert(response.statusText)
+			}else{
+				location.reload()
+			}
+		})
+
+
+	}// uploadMeme
 }
 
 export default App;

@@ -24,7 +24,7 @@ export default class MemeList extends React.Component<IProps, {}> {
                     </div>  
                 </div>
                 <div className="row meme-list-table">
-                    <table className="table table-striped">
+                    <table className="table table-hover">
                         <tbody>
                             {this.createTable()}
                         </tbody>
