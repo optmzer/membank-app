@@ -3,7 +3,7 @@ import Modal from 'react-responsive-modal';
 import './App.css';
 import MemeDetail from './Components/MemeDetails';
 import MemeList from './Components/MemeList';
-import PatrickLogo from './patrick-logo.jpg';
+import MyAvatar from './my-avatar.jpg';
 
 
 interface IState {
@@ -22,7 +22,10 @@ class App extends React.Component<{}, IState> {
 			open: false,
 			uploadFileList: null
 		}     	
-		this.selectNewMeme = this.selectNewMeme.bind(this)
+    this.selectNewMeme = this.selectNewMeme.bind(this)
+    //
+    this.fetchMemes = this.fetchMemes.bind(this)
+    this.fetchMemes("")	
 	}
 
 	public render() {
@@ -31,7 +34,7 @@ class App extends React.Component<{}, IState> {
 		<div>
 			<div className="header-wrapper">
 				<div className="container header">
-					<img src={PatrickLogo} height='40'/>&nbsp; My Meme Bank - MSA 2018 &nbsp;
+					<img src={MyAvatar} height='40'/>&nbsp; My Meme Bank - MSA 2018 &nbsp;
 					<div className="btn btn-primary btn-action btn-add" onClick={this.onOpenModal}>Add Meme</div>
 				</div>
 			</div>
@@ -41,7 +44,7 @@ class App extends React.Component<{}, IState> {
 						<MemeDetail currentMeme={this.state.currentMeme} />
 					</div>
 					<div className="col-5">
-						<MemeList memes={this.state.memes} selectNewMeme={this.selectNewMeme} searchByTag={this.methodNotImplemented}/>
+						<MemeList memes={this.state.memes} selectNewMeme={this.selectNewMeme} searchByTag={this.fetchMemes}/>
 					</div>
 				</div>
 			</div>
@@ -88,7 +91,37 @@ class App extends React.Component<{}, IState> {
 		this.setState({
 			currentMeme: newMeme
 		})
-	}
+  }
+  
+  private fetchMemes(tag: any){
+    let url = "http://phase2apitest.azurewebsites.net/api/meme"
+    if(tag !== ""){
+      url += "/tag?=" + tag
+    }
+
+    fetch(url, {method: 'GET'})
+    .then(res => res.json)
+    .then(json => {
+      let currentMeme = json[0]
+      console.log("L106 App.tsx json = " + JSON.stringify(json))
+      if(currentMeme === undefined){
+        currentMeme = {
+          "height":"0",
+          "id": 0, 
+          "tags":"try a different tag",
+          "title":"No memes (╯°□°）╯︵ ┻━┻",
+          "uploaded":"",
+          "url":"",
+          "width":"0"
+        }
+      }
+      this.setState({
+        currentMeme,
+        memes: [json]
+      })
+    });
+  }
+
 }
 
 export default App;
