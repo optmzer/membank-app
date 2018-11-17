@@ -1,13 +1,13 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-membank-app/node_modules
+node_modules
 
 # testing
-membank-app/coverage
+coverage
 
 # production
-membank-app/build
+build
 
 # misc
 .DS_Store
