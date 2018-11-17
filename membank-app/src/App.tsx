@@ -13,6 +13,9 @@ interface IState {
 	uploadFileList: any,
 }
 
+const URI_API = "https://memestorageapi.azurewebsites.net"
+// const URI_API = "http://phase2apitest.azurewebsites.net"
+
 class App extends React.Component<{}, IState> {
 	constructor(props: any) {
         super(props)
@@ -37,7 +40,7 @@ class App extends React.Component<{}, IState> {
 		return (
 		<div>
 			<div className="header-wrapper">
-				<div className="container header">
+				<div className="container header nav navbar">
 					<img src={MyAvatar} height='40'/>&nbsp; My Meme Bank - MSA 2018 &nbsp;
 					<div className="btn btn-primary btn-action btn-add" onClick={this.onOpenModal}>Add Meme</div>
 				</div>
@@ -83,7 +86,7 @@ class App extends React.Component<{}, IState> {
 	// Modal open
 	private onOpenModal = () => {
 		this.setState({ open: true });
-	  };
+	};
 	
 	// Modal close
 	private onCloseModal = () => {
@@ -95,35 +98,37 @@ class App extends React.Component<{}, IState> {
 		this.setState({
 			currentMeme: newMeme
 		})
-  }
-  
-  private fetchMemes(tag: any){
-    let url = "http://phase2apitest.azurewebsites.net/api/meme"
-    if(tag !== ""){
-      url += "/tag?=" + tag
     }
-    console.log("L101 App.tsx url = " + url)
-    fetch(url, {method: 'GET'})
-    .then(res => res.json())
-    .then(json => {
-      let currentMeme = json[0]
-      // console.log("L106 App.tsx json = " + JSON.stringify(json))
-      if(currentMeme === undefined){
-        currentMeme = {
-          "height":"0",
-          "id": 0, 
-          "tags":"try a different tag",
-          "title":"No memes (╯°□°）╯︵ ┻━┻",
-          "uploaded":"",
-          "url":"",
-          "width":"0"
-        }
-      }
-      this.setState({
-        currentMeme,
-        memes: json // was memes: json gave me an error.
-      })
-    })
+  
+    private fetchMemes(tag: any){
+		// let url = URI_API + "/api/meme"
+		let url = URI_API + "/api/MemeItem"
+		
+		if(tag !== ""){
+		url += "/tag?=" + tag
+		}
+		console.log("L101 App.tsx url = " + url)
+		fetch(url, {method: 'GET'})
+		.then(res => res.json())
+		.then(json => {
+			let currentMeme = json[0]
+			// console.log("L106 App.tsx json = " + JSON.stringify(json))
+			if(currentMeme === undefined){
+				currentMeme = {
+				"height":"0",
+				"id": 0, 
+				"tags":"try a different tag",
+				"title":"No memes (╯°□°）╯︵ ┻━┻",
+				"uploaded":"",
+				"url":"",
+				"width":"0"
+				}
+			}
+			this.setState({
+				currentMeme,
+				memes: json // was memes: json gave me an error.
+			})
+		})
 	}// fetchMemes()
 	
 // Gets file from form input
@@ -147,7 +152,8 @@ class App extends React.Component<{}, IState> {
 
 		const title = titleInput.value
 		const tag = tagInput.value
-		const url = "http://phase2apitest.azurewebsites.net/api/meme/upload"
+		// const url = URI_API + "/api/meme/upload"
+		const url = URI_API + "/api/MemeItem"
 
 		const formData = new FormData()
 		formData.append("Title", title)
