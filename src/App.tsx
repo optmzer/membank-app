@@ -1,10 +1,10 @@
+import dotenv from "dotenv";
 import * as React from 'react';
 import Modal from 'react-responsive-modal';
 import './App.css';
 import MemeDetails from './Components/MemeDetails';
 import MemeList from './Components/MemeList';
 import MyAvatar from './my-avatar.jpg';
-
 
 interface IState {
 	currentMeme: any,
@@ -13,8 +13,8 @@ interface IState {
 	uploadFileList: any,
 }
 
-const URI_API = "https://memestorageapi.azurewebsites.net"
-// const URI_API = "http://phase2apitest.azurewebsites.net"
+// const URI_API = "https://memestorageapi.azurewebsites.net"
+const URI_API = "http://phase2apitest.azurewebsites.net"
 
 class App extends React.Component<{}, IState> {
 	constructor(props: any) {
@@ -24,10 +24,14 @@ class App extends React.Component<{}, IState> {
 			memes: [],
 			open: false,
 			uploadFileList: null
-		}     	
-    this.selectNewMeme = this.selectNewMeme.bind(this)
-    //
-    this.fetchMemes = this.fetchMemes.bind(this)
+		}
+
+		// Setting Up the EVN vars
+		dotenv.config()
+		
+		this.selectNewMeme = this.selectNewMeme.bind(this)
+		//
+		this.fetchMemes = this.fetchMemes.bind(this)
 		this.fetchMemes("")	
 		//
 		this.handleFileUpload = this.handleFileUpload.bind(this)
@@ -101,13 +105,13 @@ class App extends React.Component<{}, IState> {
     }
   
     private fetchMemes(tag: any){
-		// let url = URI_API + "/api/meme"
-		let url = URI_API + "/api/MemeItem"
+		let url = URI_API + "/api/meme"
+		// let url = URI_API + "/api/MemeItem"
 		
 		if(tag !== ""){
 		url += "/tag?=" + tag
 		}
-		console.log("L101 App.tsx url = " + url)
+		// console.log("L101 App.tsx url = " + url)
 		fetch(url, {method: 'GET'})
 		.then(res => res.json())
 		.then(json => {
@@ -133,7 +137,7 @@ class App extends React.Component<{}, IState> {
 	
 // Gets file from form input
 	private handleFileUpload(fileList: any){
-		console.log("L131 App.handleFileUpload = ", fileList.target.files)
+		// console.log("L131 App.handleFileUpload = ", fileList.target.files)
 		this.setState({
 			uploadFileList: fileList.target.files
 		})
@@ -152,8 +156,8 @@ class App extends React.Component<{}, IState> {
 
 		const title = titleInput.value
 		const tag = tagInput.value
-		// const url = URI_API + "/api/meme/upload"
-		const url = URI_API + "/api/MemeItem"
+		const url = URI_API + "/api/meme/upload"
+		// const url = URI_API + "/api/MemeItem"
 
 		const formData = new FormData()
 		formData.append("Title", title)

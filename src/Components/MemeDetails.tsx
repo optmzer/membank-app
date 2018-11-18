@@ -9,8 +9,8 @@ interface IState {
     open: boolean
 }
 
-const URI_API = "https://memestorageapi.azurewebsites.net/api/MemeItem/"
-// const URI_API = "http://phase2apitest.azurewebsites.net/api/meme/"
+// const URI_API = "https://memestorageapi.azurewebsites.net/api/MemeItem/"
+const URI_API = "http://phase2apitest.azurewebsites.net/api/meme/"
 
 export default class MemeDetails extends React.Component<IProps, IState> {
 
@@ -91,7 +91,6 @@ export default class MemeDetails extends React.Component<IProps, IState> {
         }
 
         const currentMeme = this.props.currentMeme
-        // const url = URI_API + currentMeme.id
         const url = URI_API + currentMeme.id
         const updatedTitle = titleInput.value
         const updatedTag = tagInput.value
@@ -125,7 +124,6 @@ export default class MemeDetails extends React.Component<IProps, IState> {
     }// updateMeme
 
     private deleteMeme(id: any) {
-        // const url = URI_API + id
         const url = URI_API + id
 
         fetch(url, {
